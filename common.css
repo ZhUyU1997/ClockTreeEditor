@@ -178,6 +178,7 @@ span>.balloon {
     font-size: 13px;
     font-weight: 700;
     text-align: center;
+    white-space:nowrap;
     text-shadow: 0 1px 0 rgba(19, 74, 70, 0);
     transition: all .3s ease-in-out;
     border-bottom-left-radius: 3px;
