@@ -1,0 +1,343 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="./jquery-3.4.1.min.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/snap.svg/0.5.1/snap.svg-min.js"></script> -->
+    <script src="./main.js"></script>
+    <link rel="stylesheet" href="common.css">
+</head>
+
+<body>
+    <div class="root">
+        <canvas id="canvas"></canvas>
+        <svg xmlns="http://www.w3.org/2000/svg"  version="1.1" class="svg_bg" >
+            
+        </svg>
+        <div class="container" id="root">
+            <div class="container-left">
+                <div class="circle-right"></div>
+                <span>
+                    <input class="title" type="text" value="root"/>
+                </span>
+                <span>
+                    <input class="balloon" type="text" oninput="value=value.replace(/[^\d]/g,'')" />
+                    <label>Sta</label>
+                </span>
+    
+                <span>
+                    <label class="balloon checkbox"><input type='checkbox' ></label>
+                    <label>Sta</label>
+                </span>
+                <!-- <div class="create"></div> -->
+            </div>
+            <div class="container-right">
+            </div>
+        </div>
+    </div>
+
+
+    <!-- <div id="debug"></div> -->
+    <script>
+        'use strict'
+        // console.log=function(msg){
+        //     $("#debug").text($("#debug").text()+"\n"+msg)
+        // };
+        console.log("2131")
+        function updateLink() {
+            // const canvas = document.querySelector('#canvas');
+            // const ctx = canvas.getContext('2d');
+            // ctx.clearRect(0, 0, canvas.width, canvas.height);
+            $(".svg_bg").empty();
+            $(".circle-left").each(
+                function () {
+                    let circle = $(this);
+                    if ($(this).is(':hidden'))
+                        return;
+                    let X2 = circle.offset().left + 5;
+                    let Y2 = circle.offset().top + 5;
+
+                    let circle_right = $(this).parent().parent().parent().parent().children(".container-left").children(".circle-right");
+                    // console.log(circle_right.offset().left)
+
+                    let X1 = circle_right.offset().left + 5;
+                    let Y1 = circle_right.offset().top + 5;
+
+                    let offsetX= $(".root").offset().left;
+                    let offsetY= $(".root").offset().top;
+                    drawBezier([X1 - offsetX, Y1 - offsetY], [X1 + 20 - offsetX, Y1 - offsetY], [X2 - 20 - offsetX, Y2 - offsetY], [X2 - offsetX, Y2 - offsetY]);
+                }
+            );
+        }
+
+        function createContainer(parent) {
+            let container = $(`
+                    <div class="container">
+                        <div class="container-left">
+                            <span>
+                                <input class="title" type="text"/>
+                            </span>
+                            <div class="circle-left"></div>
+                            <div class="circle-right"></div>
+                            <div class="create"></div>
+                        </div>
+                        <div class="container-right">
+                        </div>
+                    </div>`);
+            parent.children(".container-right").append(container);
+            return parent.children(".container-right").children(".container").last();
+        }
+
+        function setContainerTitle(container, text) {
+            container.children(".container-left").find(".title").val(text);
+        }
+
+        function clickRightContainer() {
+            if ($(this).parent().next().find(".container").length <= 2) {
+                // <svg xmlns="http://www.w3.org/2000/svg" viewBox="0,0,100,100" version="1.1" class="bezier" preserveAspectRatio="none">
+                //                 <path d="M 0 98 C 30 100, 70 0, 100 2" stroke="blue" stroke-width="3" fill="none" />
+                //             </svg>
+                createContainer($(this).parent().parent());
+            }
+            else {
+                if ($(this).parent().next().children().is(':hidden')) {
+                    $(this).parent().next().children().show();
+                }
+                else {
+                    $(this).parent().next().children().hide();
+                }
+            }
+            resizeCanvas();
+            updateLink();
+        }
+
+        function clickLeftContainer() {
+            //TODO：没有元素不处理
+            let temp = $(this).nextAll("span");
+            if (temp.is(':hidden')) {
+                temp.show();
+                $(this).parent().next().show();
+            }
+            else {
+                temp.hide();
+                $(this).parent().next().hide();
+            }
+            resizeCanvas();
+            updateLink();
+        }
+
+        function createEditor(parent, key, value) {
+
+            let editor = null;
+            let content = null;
+            if(typeof(value) === "string")
+            {
+                editor = $(`
+                    <span>
+                        <input class="balloon" type="text"/>
+                        <label>${key}</label>
+                    </span>`);
+                content = value;
+            }
+            else if(typeof(value) === "number")
+            {
+                editor = $(`
+                    <span>
+                        <input class="balloon" type="text" oninput="value=value.replace(/[^\\d]/g,'')" />
+                        <label>${key}</label>
+                    </span>`);
+                content = value;
+            }
+            else if(typeof(value) === "boolean")
+            {
+                editor = $(`
+                    <span>
+                        <label class="balloon checkbox"><input type='checkbox'></label>
+                        <label>${key}</label>
+                    </span>`);
+                content = value;
+            }
+            else
+            {
+                editor = $(`
+                    <span>
+                        <input class="balloon" type="text"/>
+                        <label>${key}</label>
+                    </span>`);
+                content = JSON.stringify(value);
+            }
+
+            let temp = parent.children(".container-left")
+            temp.children(".create").before(editor);
+            let ret = temp.find(".balloon").last();
+
+            if(typeof(value) === "boolean")
+                ret.attr("checked", content);
+            else
+                ret.val(content);
+            return ret;
+        }
+
+        function clickAdd() {
+            createEditor($(this).parent().parent(), "","");
+            resizeCanvas();
+            updateLink();
+        }
+
+        function resizeCanvas() {
+            // console.log(`${$(".root").innerWidth()},${$(".root").innerHeight()}`);
+            // $("#canvas").attr("width", $(".root").innerWidth());
+            // $("#canvas").attr("height", $(".root").innerHeight());
+            updateLink();
+        }
+
+        function drawBezier(beginPoint, controlPoint1, controlPoint2, endPoint) {
+            // const canvas = document.querySelector('#canvas');
+            // const ctx = canvas.getContext('2d');
+            // ctx.strokeStyle = '#ff887680';
+            // ctx.lineWidth = 3;
+            // ctx.lineJoin = 'round';
+            // ctx.lineCap = 'round';
+
+            // ctx.beginPath();
+            // ctx.moveTo(beginPoint[0], beginPoint[1]);
+            // ctx.bezierCurveTo(controlPoint1[0], controlPoint1[1], controlPoint2[0],
+            //     controlPoint2[1], endPoint[0], endPoint[1]);
+            // ctx.stroke();
+            // ctx.closePath();
+
+            // let s = Snap(".svg_bg");
+            // s.path(`M ${Math.trunc(beginPoint[0])} ${Math.trunc(beginPoint[1])} 
+            //     C ${Math.trunc(controlPoint1[0])} ${Math.trunc(controlPoint1[1])}, 
+            //     ${Math.trunc(controlPoint2[0])} ${Math.trunc(controlPoint2[1])}, 
+            //     ${Math.trunc(endPoint[0])} ${Math.trunc(endPoint[1])}`).attr({
+            //     fill: "none",
+            //     stroke: "#ee8876",
+            //     strokeWidth: 3
+            // });
+            let path  = $(document.createElementNS("http://www.w3.org/2000/svg", "path"));
+            path.attr("d", `M ${Math.trunc(beginPoint[0])} ${Math.trunc(beginPoint[1])} 
+                C ${Math.trunc(controlPoint1[0])} ${Math.trunc(controlPoint1[1])}, 
+                ${Math.trunc(controlPoint2[0])} ${Math.trunc(controlPoint2[1])}, 
+                ${Math.trunc(endPoint[0])} ${Math.trunc(endPoint[1])}`);
+            path.attr({
+                "d": `M ${Math.trunc(beginPoint[0])} ${Math.trunc(beginPoint[1])} 
+                    C ${Math.trunc(controlPoint1[0])} ${Math.trunc(controlPoint1[1])}, 
+                    ${Math.trunc(controlPoint2[0])} ${Math.trunc(controlPoint2[1])}, 
+                    ${Math.trunc(endPoint[0])} ${Math.trunc(endPoint[1])}`,
+                "stroke":"#ff8876",
+                "stroke-width":"3",
+                "fill":"none",
+                // "name":"342"
+            });
+
+            $(".svg_bg").append(path);
+        }
+
+        function dragPanelMove(moveDiv) {
+            $(moveDiv).mousedown(function (e) {
+                var isMove = true;
+                var div_x = e.pageX - $(moveDiv).offset().left;
+                var div_y = e.pageY - $(moveDiv).offset().top;
+                $(document).mousemove(function (e) {
+                    if (isMove) {
+                        var obj = $(moveDiv);
+                        obj.css({ "left": e.pageX - div_x, "top": e.pageY - div_y });
+                    }
+                }).mouseup(
+                    function () {
+                        isMove = false;
+                    });
+            });
+        }
+
+        function createContainerByJson(driverInfo, nameMap, json, name, container) {
+            for (let i of driverInfo[nameMap[name]].child) {
+                // console.log(i);
+                let ret = createContainer(container);
+                setContainerTitle(ret, nameMap[i]);
+                let last = container.children(".container-right").children(".container").last();
+
+                let data = json[nameMap[i]];
+                for (let key in data) {
+                    // console.log(key);
+                    createEditor(last, key, data[key]);
+                }
+                createContainerByJson(driverInfo, nameMap, json, i, last);
+            }
+        }
+
+        function parseDeviceTree(){
+            let driver = {
+                "root": {
+                    name: "root",
+                    parent: null,
+                    child: []
+                }
+            };
+            let nameMap = { "root": "root" };
+
+            for (let i in json) {
+                // console.log(i);
+
+                // createContainer($("#root"));
+                // for(let j in json[i])
+                // {
+                //     createEditor($("#root").children(".container-right").children(".container").last(),j);
+                // }
+                driver[i] = {};
+                for (let j in json[i]) {
+                    if (j === "name") {
+                        driver[i][j] = json[i][j];
+                        nameMap[json[i][j]] = i;
+                    }
+                    else if (j === "parent") {
+                        if (typeof (json[i][j]) == "string") {
+                            driver[i][j] = json[i][j];
+                        }
+                        else {
+                            driver[i][j] = json[i][j][0]["name"];
+                        }
+                    }
+                }
+
+                if (!("parent" in driver[i])) {
+                    driver[i]["parent"] = "root";
+                }
+                driver[i]["child"] = [];
+            }
+
+            for (let i in driver) {
+                if (driver[i].name === "root" || !(driver[i].parent in nameMap))
+                    continue;
+                driver[nameMap[driver[i].parent]].child.push(driver[i].name);
+            }
+            createContainerByJson(driver,nameMap,json,"root", $("#root"));
+        }
+        (function () {
+
+            $(document).on("click", ".circle-right", clickRightContainer)
+            $(document).on("click", ".circle-left", clickLeftContainer)
+            $(document).on("click", ".create", clickAdd)
+
+            $(window).resize(resizeCanvas);
+            resizeCanvas();
+            // createContainer($("#root"));
+            // createContainer($("#root").children(".container-right").children(".container"));
+            // $("#root").children(".circle-right").children(".circle-left").append("<p>232</p>");
+            // console.log($("#root").children(".circle-right").children(".circle-left").children("p").text())
+
+            
+            // let ret = createContainer($("body"));
+            // setContainerTitle(ret, "root");
+
+            // parseDeviceTree();
+            resizeCanvas();
+            updateLink();
+        })();
+    </script>
+</body>
+
+</html>
