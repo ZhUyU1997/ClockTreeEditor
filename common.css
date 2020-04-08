@@ -71,7 +71,6 @@ body {
 .circle.circle-left {
     top: calc(50% - 5px);
     left: -10px;
-    
 }
 
 .circle.circle-right {
@@ -225,7 +224,6 @@ span>.checkbox:hover {
     background: #fff;
 }
 
-
 /* #debug
 {
     width: 100%;
@@ -256,6 +254,7 @@ span:not(.object) {
 }
 
 /* title */
+
 .container-left>span:first-child>input {
     height: 30px;
     font-family: "Open Sans", sans;
@@ -273,7 +272,7 @@ span:not(.object) {
     border-bottom: rgb(255, 255, 255) 3px solid;
 }
 
-span.object>span:first-child, .container-left>span:not(.object){
+span.object>span:first-child, .container-left>span:not(.object) {
     width: 100%;
 }
 
@@ -286,12 +285,11 @@ span:not(.object):focus-within {
     border-left: rgba(64, 116, 13, 255) 5px solid;
 }
 
-span.object:focus-within > span:first-child {
+span.object:focus-within>span:first-child {
     border-left: rgba(64, 116, 13, 255) 5px solid;
 }
 
-span.object>span:first-child>.checkbox>input::after
-{
+span.object>span:first-child>.checkbox>input::after {
     content: "";
     width: 20px;
     height: 38px;

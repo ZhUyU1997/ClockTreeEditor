@@ -13,70 +13,15 @@
 <body>
     <div class="root">
         <canvas id="canvas"></canvas>
-        <svg xmlns="http://www.w3.org/2000/svg"  version="1.1" class="svg_bg" >
-            
+        <svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="svg_bg">
+
         </svg>
         <div class="container" id="root">
             <div class="container-left">
                 <span>
-                    <input type="text"/>
+                    <input type="text" />
                 </span>
-                <div class="circle circle-right"></div>     
-                <span>
-                    <input class="balloon" type="text" oninput="value=value.replace(/[^\d]/g,'')" />
-                    <label>Sta</label>
-                </span>
-    
-                <span>
-                    <label class="balloon checkbox"><input type='checkbox' ></label>
-                    <label>Sta</label>
-                </span>
-                <span class="object">
-                    <span>
-                        <label class="balloon drop-down checkbox"><input type='checkbox' ></label>
-                        <label>Sta</label>
-                    </span>
-                    
-                    <span>
-                        <input class="balloon" type="text" oninput="value=value.replace(/[^\d]/g,'')" />
-                        <label>Sta</label>
-                    </span>
-                    <span>
-                        <input class="balloon" type="text" oninput="value=value.replace(/[^\d]/g,'')" />
-                        <label>Sta</label>
-                    </span>
-                    <span class="object">
-                        <span>
-                            <label class="balloon drop-down checkbox"><input type='checkbox' ></label>
-                            <label>Sta</label>
-                        </span>
-                        
-                        <span>
-                            <input class="balloon" type="text" oninput="value=value.replace(/[^\d]/g,'')" />
-                            <label>Sta</label>
-                        </span>
-                        <span>
-                            <input class="balloon" type="text" oninput="value=value.replace(/[^\d]/g,'')" />
-                            <label>Sta</label>
-                        </span>
-                        <span class="object">
-                            <span>
-                                <label class="balloon drop-down checkbox"><input type='checkbox' ></label>
-                                <label>Sta</label>
-                            </span>
-                            
-                            <span>
-                                <input class="balloon" type="text" oninput="value=value.replace(/[^\d]/g,'')" />
-                                <label>Sta</label>
-                            </span>
-                            <span>
-                                <input class="balloon" type="text" oninput="value=value.replace(/[^\d]/g,'')" />
-                                <label>Sta</label>
-                            </span>
-                        </span>
-                    </span>
-                </span>
-                <div class="create"></div>
+                <div class="circle circle-right"></div>
             </div>
             <div class="container-right">
             </div>
@@ -110,8 +55,8 @@
                     let X1 = circle_right.offset().left + 5;
                     let Y1 = circle_right.offset().top + 5;
 
-                    let offsetX= $(".root").offset().left;
-                    let offsetY= $(".root").offset().top;
+                    let offsetX = $(".root").offset().left;
+                    let offsetY = $(".root").offset().top;
                     drawBezier([X1 - offsetX, Y1 - offsetY], [X1 + 20 - offsetX, Y1 - offsetY], [X2 - 20 - offsetX, Y2 - offsetY], [X2 - offsetX, Y2 - offsetY]);
                 }
             );
@@ -159,15 +104,13 @@
         }
 
         function clickLeftContainer() {
-            //TODO：没有元素不处理
-            let temp = $(this).nextAll("span");
+            //TODO：没有元素情况下不处理
+            let temp = $(this).parent().children("span:not(:first-child)");
             if (temp.is(':hidden')) {
                 temp.show();
-                $(this).parent().next().show();
             }
             else {
                 temp.hide();
-                $(this).parent().next().hide();
             }
             resizeCanvas();
             updateLink();
@@ -177,8 +120,7 @@
 
             let editor = null;
             let content = null;
-            if(typeof(value) === "string")
-            {
+            if (typeof (value) === "string") {
                 editor = $(`
                     <span>
                         <input class="balloon" type="text"/>
@@ -186,8 +128,7 @@
                     </span>`);
                 content = value;
             }
-            else if(typeof(value) === "number")
-            {
+            else if (typeof (value) === "number") {
                 editor = $(`
                     <span>
                         <input class="balloon" type="text" oninput="value=value.replace(/[^\\d]/g,'')" />
@@ -195,8 +136,7 @@
                     </span>`);
                 content = value;
             }
-            else if(typeof(value) === "boolean")
-            {
+            else if (typeof (value) === "boolean") {
                 editor = $(`
                     <span>
                         <label class="balloon checkbox"><input type='checkbox'></label>
@@ -204,8 +144,7 @@
                     </span>`);
                 content = value;
             }
-            else if(typeof(value) === "object")
-            {
+            else if (typeof (value) === "object") {
                 editor = $(`
                     <span class="object">
                         <span>
@@ -215,8 +154,7 @@
                     </span>`);
                 content = value;
             }
-            else
-            {
+            else {
                 editor = $(`
                     <span>
                         <input class="balloon" type="text"/>
@@ -229,22 +167,21 @@
             let last = parent.children("span").last();
             let input = last.find(".balloon");
 
-            if(typeof(value) === "boolean")
+            if (typeof (value) === "boolean")
                 input.attr("checked", content);
             else
                 input.val(content);
 
-            if(typeof(value) === "object") {
-                for(let i in value)
-                {
-                    console.log(i, value[i]);
+            if (typeof (value) === "object") {
+                for (let i in value) {
+                    // console.log(i, value[i]);
                     createEditor(last, i, value[i]);
                 }
             }
         }
 
         function clickAdd() {
-            createEditor($(this).parent(), "","");
+            createEditor($(this).parent(), "", "");
             resizeCanvas();
             updateLink();
         }
@@ -280,7 +217,7 @@
             //     stroke: "#ee8876",
             //     strokeWidth: 3
             // });
-            let path  = $(document.createElementNS("http://www.w3.org/2000/svg", "path"));
+            let path = $(document.createElementNS("http://www.w3.org/2000/svg", "path"));
             path.attr("d", `M ${Math.trunc(beginPoint[0])} ${Math.trunc(beginPoint[1])} 
                 C ${Math.trunc(controlPoint1[0])} ${Math.trunc(controlPoint1[1])}, 
                 ${Math.trunc(controlPoint2[0])} ${Math.trunc(controlPoint2[1])}, 
@@ -290,9 +227,9 @@
                     C ${Math.trunc(controlPoint1[0])} ${Math.trunc(controlPoint1[1])}, 
                     ${Math.trunc(controlPoint2[0])} ${Math.trunc(controlPoint2[1])}, 
                     ${Math.trunc(endPoint[0])} ${Math.trunc(endPoint[1])}`,
-                "stroke":"#ff8876",
-                "stroke-width":"3",
-                "fill":"none",
+                "stroke": "#ff8876",
+                "stroke-width": "3",
+                "fill": "none",
                 // "name":"342"
             });
 
@@ -332,7 +269,7 @@
             }
         }
 
-        function parseDeviceTree(){
+        function parseDeviceTree() {
             let driver = {
                 "root": {
                     name: "root",
@@ -377,23 +314,48 @@
                     continue;
                 driver[nameMap[driver[i].parent]].child.push(driver[i].name);
             }
-            createContainerByJson(driver,nameMap,json,"root", $("#root"));
+            createContainerByJson(driver, nameMap, json, "root", $("#root"));
         }
+
+        function keydownInput(event) {
+            let keynum = (event.keyCode ? event.keyCode : event.which);
+            let content = $(this).val();
+            if (keynum === 13) {
+                let container_left = $(this).parent().parent();
+                if ($(this).next().text() === "name" && $(this).parent().parent().hasClass("container-left")) {
+                    let child_container_list = container_left.next().children(".container").children(".container-left");
+
+                    //K-V
+                    child_container_list.find("span:not(.object) >label").each(function () {
+                        if ($(this).text() === "parent") {
+                            $(this).prev().val(content);
+                        }
+                    });
+
+                    //Array
+                    child_container_list.find("span.object > span:eq(0) > label").each(function () {
+                        if ($(this).text() === "parent") {
+                            $(this).parent().next().children("span:eq(1)").children("input").val(content);
+                        }
+                    });
+                }
+            }
+        }
+
         (function () {
 
             $(document).on("click", ".circle-right", clickRightContainer);
             $(document).on("click", ".circle-left", clickLeftContainer);
             $(document).on("click", ".create", clickAdd);
+            $(document).on("keydown", "input[type=text]", keydownInput);
             //label 绑定了input， 会触发两次，故直接绑定input
-            $(document).on("click", "span.object > span:first-child > label:first-child > input", function(){
+            $(document).on("click", "span.object > span:first-child > label:first-child > input", function () {
                 let ele = $(this).parent().parent().nextAll("span")
                 console.log(ele.is(':hidden'))
-                if(ele.is(':hidden'))
-                {
+                if (ele.is(':hidden')) {
                     ele.show();
                 }
-                else
-                {
+                else {
                     ele.hide();
                 }
                 updateLink();
@@ -405,7 +367,7 @@
             // $("#root").children(".circle-right").children(".circle-left").append("<p>232</p>");
             // console.log($("#root").children(".circle-right").children(".circle-left").children("p").text())
 
-            
+
             // let ret = createContainer($("body"));
             // setContainerTitle(ret, "root");
 
