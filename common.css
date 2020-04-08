@@ -1,7 +1,7 @@
 body {
     /* background-image: linear-gradient(-20deg, #d0b782 20%, #a0cecf 80%); */
     background-color: #a0cecf;
-    background-size:100% 100%;
+    background-size: 100% 100%;
     display: flex;
     justify-content: center;
     align-items: flex-start;
@@ -20,7 +20,6 @@ body {
     left: 0px;
     margin-left: 100px;
     /* background: linear-gradient(-20deg, #d0b782 20%, #a0cecf 80%); */
-
 }
 
 .container {
@@ -59,32 +58,28 @@ body {
     flex-direction: column;
 }
 
-
-.circle-left {
+.circle {
     position: absolute;
     width: 10px;
     height: 10px;
+    backdrop-filter: blur(20px);
+    border-radius: 5px;
+    background: linear-gradient(145deg, #ca6a5d, rgba(240, 126, 110, 0.50196));
+    box-shadow: 1px 1px 2px rgba(190, 100, 88, 0.50196), -1px -1px 2px rgba(255, 136, 118, 0.50196);
+}
+
+.circle.circle-left {
     top: calc(50% - 5px);
     left: -10px;
-    backdrop-filter: blur(20px);
-    border-radius: 5px;
-    background: linear-gradient(145deg, #ca6a5d, rgba(240, 126, 110, 0.50196));
-    box-shadow: 1px 1px 2px rgba(190, 100, 88, 0.50196), -1px -1px 2px rgba(255, 136, 118, 0.50196);
+    
 }
 
-.circle-right {
-    position: absolute;
-    width: 10px;
-    height: 10px;
+.circle.circle-right {
     top: calc(50% - 5px);
     left: calc(100%);
-    backdrop-filter: blur(20px);
-    border-radius: 5px;
-    background: linear-gradient(145deg, #ca6a5d, rgba(240, 126, 110, 0.50196));
-    box-shadow: 1px 1px 2px rgba(190, 100, 88, 0.50196), -1px -1px 2px rgba(255, 136, 118, 0.50196);
 }
 
-.circle-right:hover, .circle-left:hover {
+.circle.circle-right:hover, .circle.circle-left:hover {
     background: #55b9f3;
     box-shadow: 1px 1px 2px #489dcf, -1px -1px 2px #62d5ff;
 }
@@ -124,25 +119,6 @@ body {
     box-shadow: 3px 3px 5px #757575;
 }
 
-.container-left>span {
-    position: relative;
-    /* margin: 5px; */
-    width: 100%;
-    /* display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: row; */
-    margin-top: 5px;
-    margin-bottom: 5px;
-    border-left: rgba(0, 0, 0, 0) 5px solid;
-    border-right: rgba(0, 0, 0, 0) 5px solid;
-    box-sizing: border-box;
-}
-
-.container-left>span:focus-within {
-    border-left: rgb(64, 116, 13) 5px solid;
-}
-
 span>.balloon {
     display: inline-block;
     position: absolute;
@@ -159,13 +135,24 @@ span>.balloon {
     border-radius: 3px;
     text-align: right;
     /* text-indent: calc(100% - 90px); */
-    transition: all .3s ease-in-out;
+    /* transition: all .3s ease-in-out; */
     box-shadow: 2px 2px 4px #757575;
     box-sizing: border-box;
     width: 100%;
 }
 
-.balloon+label {
+span>input[type=text].balloon:focus, span>input[type=text].balloon:active {
+    color: #377D6A;
+    background: #fff;
+    text-align: left;
+}
+
+span>input[type=text].balloon:hover {
+    color: #377D6A;
+    background: #fff;
+}
+
+span>.balloon+label {
     display: inline-block;
     position: relative;
     left: 0px;
@@ -178,29 +165,22 @@ span>.balloon {
     font-size: 13px;
     font-weight: 700;
     text-align: center;
-    white-space:nowrap;
+    white-space: nowrap;
     text-shadow: 0 1px 0 rgba(19, 74, 70, 0);
-    transition: all .3s ease-in-out;
+    transition: transform .3s ease-in-out;
     border-bottom-left-radius: 3px;
     border-top-left-radius: 3px;
     background: #a8dabc;
 }
 
-.balloon+label:after {
+span>.balloon+label:after {
     /* display: inline-block; */
     left: 0px;
     position: relative;
     width: 0px;
 }
 
-input[type=text].balloon:focus, input[type=text].balloon:active {
-    color: #377D6A;
-    text-indent: 0;
-    background: #fff;
-    text-align: left;
-}
-
-input[type=text].balloon:focus+label, input[type=text].balloon:active+label {
+span>input[type=text].balloon:focus+label, span>input[type=text].balloon:active+label {
     color: #fff;
     text-shadow: 0 1px 0 rgba(19, 74, 70, 0.4);
     background: #7ab893;
@@ -219,16 +199,16 @@ span>.checkbox>input {
     font-family: "Open Sans", sans;
     font-weight: 400;
     color: #377D6A;
-    transition: all .3s ease-in-out;
+    /* transition: all .3s ease-in-out; */
     text-align: right;
-    visibility:hidden;
+    visibility: hidden;
 }
 
 span>.checkbox>input::after {
     display: inline-block;
     width: 100%;
     box-sizing: border-box;
-    visibility:visible
+    visibility: visible
 }
 
 span>.checkbox>input:checked::after {
@@ -238,16 +218,45 @@ span>.checkbox>input:checked::after {
 
 span>.checkbox>input:not(:checked)::after {
     content: "false";
+    display: inline-block;
 }
 
 span>.checkbox:hover {
-    color: #377D6A;
     background: #fff;
 }
 
-.title {
-    /* display: inline-block; */
-    /* width: 215px; */
+
+/* #debug
+{
+    width: 100%;
+    height: 100px;
+} */
+
+span.object {
+    min-width: 120px;
+    min-height: 30px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    display: flex;
+    flex-grow: 0;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    position: relative;
+    width: 100%;
+}
+
+span:not(.object) {
+    position: relative;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border-left: rgba(0, 0, 0, 0) 5px solid;
+    border-right: rgba(0, 0, 0, 0) 5px solid;
+    box-sizing: border-box;
+}
+
+/* title */
+.container-left>span:first-child>input {
     height: 30px;
     font-family: "Open Sans", sans;
     font-weight: 700;
@@ -260,12 +269,40 @@ span>.checkbox:hover {
     width: 100%;
 }
 
-.title:focus {
+.container-left>span:first-child>input:focus {
     border-bottom: rgb(255, 255, 255) 3px solid;
 }
 
-/* #debug
-{
+span.object>span:first-child, .container-left>span:not(.object){
     width: 100%;
-    height: 100px;
-} */
+}
+
+span.object>span:not(:first-child) {
+    width: calc(100% - 30px);
+    margin-left: 30px;
+}
+
+span:not(.object):focus-within {
+    border-left: rgba(64, 116, 13, 255) 5px solid;
+}
+
+span.object:focus-within > span:first-child {
+    border-left: rgba(64, 116, 13, 255) 5px solid;
+}
+
+span.object>span:first-child>.checkbox>input::after
+{
+    content: "";
+    width: 20px;
+    height: 38px;
+    background-image: url(drop.svg);
+    background-repeat: no-repeat;
+    background-size: 20px 20px;
+    background-position-x: center;
+    background-position-y: center;
+    transition: all 0.3s;
+}
+
+span.object>span:first-child>.checkbox>input:checked::after {
+    transform: rotate(90deg);
+}

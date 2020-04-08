@@ -18,11 +18,11 @@
         </svg>
         <div class="container" id="root">
             <div class="container-left">
-                <div class="circle-right"></div>
                 <span>
-                    <input class="title" type="text" value="root"/>
+                    <input type="text"/>
                 </span>
-                <!-- <span>
+                <div class="circle circle-right"></div>     
+                <span>
                     <input class="balloon" type="text" oninput="value=value.replace(/[^\d]/g,'')" />
                     <label>Sta</label>
                 </span>
@@ -30,8 +30,53 @@
                 <span>
                     <label class="balloon checkbox"><input type='checkbox' ></label>
                     <label>Sta</label>
-                </span> -->
-                <!-- <div class="create"></div> -->
+                </span>
+                <span class="object">
+                    <span>
+                        <label class="balloon drop-down checkbox"><input type='checkbox' ></label>
+                        <label>Sta</label>
+                    </span>
+                    
+                    <span>
+                        <input class="balloon" type="text" oninput="value=value.replace(/[^\d]/g,'')" />
+                        <label>Sta</label>
+                    </span>
+                    <span>
+                        <input class="balloon" type="text" oninput="value=value.replace(/[^\d]/g,'')" />
+                        <label>Sta</label>
+                    </span>
+                    <span class="object">
+                        <span>
+                            <label class="balloon drop-down checkbox"><input type='checkbox' ></label>
+                            <label>Sta</label>
+                        </span>
+                        
+                        <span>
+                            <input class="balloon" type="text" oninput="value=value.replace(/[^\d]/g,'')" />
+                            <label>Sta</label>
+                        </span>
+                        <span>
+                            <input class="balloon" type="text" oninput="value=value.replace(/[^\d]/g,'')" />
+                            <label>Sta</label>
+                        </span>
+                        <span class="object">
+                            <span>
+                                <label class="balloon drop-down checkbox"><input type='checkbox' ></label>
+                                <label>Sta</label>
+                            </span>
+                            
+                            <span>
+                                <input class="balloon" type="text" oninput="value=value.replace(/[^\d]/g,'')" />
+                                <label>Sta</label>
+                            </span>
+                            <span>
+                                <input class="balloon" type="text" oninput="value=value.replace(/[^\d]/g,'')" />
+                                <label>Sta</label>
+                            </span>
+                        </span>
+                    </span>
+                </span>
+                <div class="create"></div>
             </div>
             <div class="container-right">
             </div>
@@ -77,10 +122,10 @@
                     <div class="container">
                         <div class="container-left">
                             <span>
-                                <input class="title" type="text"/>
+                                <input type="text"/>
                             </span>
-                            <div class="circle-left"></div>
-                            <div class="circle-right"></div>
+                            <div class="circle circle-left"></div>
+                            <div class="circle circle-right"></div>
                             <div class="create"></div>
                         </div>
                         <div class="container-right">
@@ -91,7 +136,7 @@
         }
 
         function setContainerTitle(container, text) {
-            container.children(".container-left").find(".title").val(text);
+            container.children(".container-left").children("span").first().children("input").val(text);
         }
 
         function clickRightContainer() {
@@ -159,6 +204,17 @@
                     </span>`);
                 content = value;
             }
+            else if(typeof(value) === "object")
+            {
+                editor = $(`
+                    <span class="object">
+                        <span>
+                            <label class="balloon drop-down checkbox"><input type='checkbox' ></label>
+                            <label>${key}</label>
+                        </span>
+                    </span>`);
+                content = value;
+            }
             else
             {
                 editor = $(`
@@ -169,19 +225,26 @@
                 content = JSON.stringify(value);
             }
 
-            let temp = parent.children(".container-left")
-            temp.children(".create").before(editor);
-            let ret = temp.find(".balloon").last();
+            parent.children("span").last().after(editor);
+            let last = parent.children("span").last();
+            let input = last.find(".balloon");
 
             if(typeof(value) === "boolean")
-                ret.attr("checked", content);
+                input.attr("checked", content);
             else
-                ret.val(content);
-            return ret;
+                input.val(content);
+
+            if(typeof(value) === "object") {
+                for(let i in value)
+                {
+                    console.log(i, value[i]);
+                    createEditor(last, i, value[i]);
+                }
+            }
         }
 
         function clickAdd() {
-            createEditor($(this).parent().parent(), "","");
+            createEditor($(this).parent(), "","");
             resizeCanvas();
             updateLink();
         }
@@ -263,7 +326,7 @@
                 let data = json[nameMap[i]];
                 for (let key in data) {
                     // console.log(key);
-                    createEditor(last, key, data[key]);
+                    createEditor(last.children(".container-left"), key, data[key]);
                 }
                 createContainerByJson(driverInfo, nameMap, json, i, last);
             }
@@ -318,10 +381,23 @@
         }
         (function () {
 
-            $(document).on("click", ".circle-right", clickRightContainer)
-            $(document).on("click", ".circle-left", clickLeftContainer)
-            $(document).on("click", ".create", clickAdd)
-
+            $(document).on("click", ".circle-right", clickRightContainer);
+            $(document).on("click", ".circle-left", clickLeftContainer);
+            $(document).on("click", ".create", clickAdd);
+            //label 绑定了input， 会触发两次，故直接绑定input
+            $(document).on("click", "span.object > span:first-child > label:first-child > input", function(){
+                let ele = $(this).parent().parent().nextAll("span")
+                console.log(ele.is(':hidden'))
+                if(ele.is(':hidden'))
+                {
+                    ele.show();
+                }
+                else
+                {
+                    ele.hide();
+                }
+                updateLink();
+            });
             $(window).resize(resizeCanvas);
             resizeCanvas();
             // createContainer($("#root"));
