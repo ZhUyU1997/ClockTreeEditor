@@ -27,7 +27,13 @@
             </div>
         </div>
     </div>
-
+    <div class="popup">
+        <div class="file-drag" id="file-drag">
+            <div>DRAG FILE HERE OR</div>
+            <div>BROWSE<input type="file" id="select-file"></div>
+            <div></div>
+        </div>
+    </div>
 
     <!-- <div id="debug"></div> -->
     <script>
@@ -35,11 +41,11 @@
         // console.log=function(msg){
         //     $("#debug").text($("#debug").text()+"\n"+msg)
         // };
-        console.log("2131")
         function updateLink() {
             // const canvas = document.querySelector('#canvas');
             // const ctx = canvas.getContext('2d');
             // ctx.clearRect(0, 0, canvas.width, canvas.height);
+            console.log("update");
             $(".svg_bg").empty();
             $(".circle-left").each(
                 function () {
@@ -99,8 +105,7 @@
                     $(this).parent().next().children().hide();
                 }
             }
-            resizeCanvas();
-            updateLink();
+            update();
         }
 
         function clickLeftContainer() {
@@ -112,11 +117,10 @@
             else {
                 temp.hide();
             }
-            resizeCanvas();
-            updateLink();
+            update();
         }
 
-        function createEditor(parent, key, value) {
+        function createEditor(parent, key, value, status) {
 
             let editor = null;
             let content = null;
@@ -172,6 +176,10 @@
             else
                 input.val(content);
 
+            if (typeof (status) !== "undefined" && status === "disabled") {
+                input.attr("disabled", "disabled")
+            }
+
             if (typeof (value) === "object") {
                 for (let i in value) {
                     // console.log(i, value[i]);
@@ -182,8 +190,7 @@
 
         function clickAdd() {
             createEditor($(this).parent(), "", "");
-            resizeCanvas();
-            updateLink();
+            update();
         }
 
         function resizeCanvas() {
@@ -191,6 +198,10 @@
             // $("#canvas").attr("width", $(".root").innerWidth());
             // $("#canvas").attr("height", $(".root").innerHeight());
             updateLink();
+        }
+
+        function update() {
+            resizeCanvas();
         }
 
         function drawBezier(beginPoint, controlPoint1, controlPoint2, endPoint) {
@@ -265,11 +276,15 @@
                     // console.log(key);
                     createEditor(last.children(".container-left"), key, data[key]);
                 }
+
+                if (!("rate" in data)) {
+                    createEditor(last.children(".container-left"), "rate", 0, "disabled");
+                }
                 createContainerByJson(driverInfo, nameMap, json, i, last);
             }
         }
 
-        function parseDeviceTree() {
+        function parseDeviceTree(json) {
             let driver = {
                 "root": {
                     name: "root",
@@ -280,13 +295,11 @@
             let nameMap = { "root": "root" };
 
             for (let i in json) {
-                // console.log(i);
+                if(i.substr(0,4) !== "clk-")
+                {
+                    continue;
+                }
 
-                // createContainer($("#root"));
-                // for(let j in json[i])
-                // {
-                //     createEditor($("#root").children(".container-right").children(".container").last(),j);
-                // }
                 driver[i] = {};
                 for (let j in json[i]) {
                     if (j === "name") {
@@ -317,6 +330,7 @@
             createContainerByJson(driver, nameMap, json, "root", $("#root"));
         }
 
+
         function keydownInput(event) {
             let keynum = (event.keyCode ? event.keyCode : event.which);
             let content = $(this).val();
@@ -324,24 +338,60 @@
                 let container_left = $(this).parent().parent();
                 if ($(this).next().text() === "name" && $(this).parent().parent().hasClass("container-left")) {
                     let child_container_list = container_left.next().children(".container").children(".container-left");
-
                     //K-V
-                    child_container_list.find("span:not(.object) >label").each(function () {
+                    child_container_list.children("span:not(.object)").children("label").each(function () {
                         if ($(this).text() === "parent") {
                             $(this).prev().val(content);
+                            $(this).prev().addClass("text-change");
+
+                            setTimeout(() => $(this).prev().removeClass("text-change"), 1000);
+
                         }
                     });
 
                     //Array
-                    child_container_list.find("span.object > span:eq(0) > label").each(function () {
+                    child_container_list.children("span.object").children("span:nth-child(1)").children("label:nth-child(2)").each(function () {
                         if ($(this).text() === "parent") {
-                            $(this).parent().next().children("span:eq(1)").children("input").val(content);
+                            let input = $(this).parent().next().children("span:nth-child(2)").children("input");
+                            input.val(content);
+                            input.addClass("text-change");
+
+                            setTimeout(() => input.removeClass("text-change"), 1000);
+
                         }
                     });
                 }
             }
         }
 
+        function readFile(file) {
+            console.log("3213");
+
+            if (file.type === "application/json") {
+                console.log(file)
+                let reader = new FileReader();//new一个FileReader实
+                reader.readAsText(file);
+                reader.onload = function () {
+                    //取到文件结果，就可以它了
+                    var fileResult = reader.result;
+                    try {
+                        let json = JSON.parse(reader.result);
+                        console.log("JSON");
+                        $(".popup").hide();
+                        parseDeviceTree(json);
+                        console.log("3213");
+                        update();
+
+                    } catch (e) {
+                        console.log(e);
+                        $("#file-drag > div:nth-child(3)").text("文件格式不合法")
+                    }
+                }
+            }
+            else {
+                $("#file-drag > div:nth-child(3)").text("请上传JSON文件")
+            }
+        }
         (function () {
 
             $(document).on("click", ".circle-right", clickRightContainer);
@@ -358,22 +408,30 @@
                 else {
                     ele.hide();
                 }
-                updateLink();
+                update();
             });
+
+
+            $("#file-drag")[0].ondragover = function (e) {
+                e.preventDefault();
+                //拖拽元素进入投放区时，鼠标样式变为move
+                e.dataTransfer.dropEffect = 'move';
+            };
+            $("#file-drag")[0].ondrop = function (e) {
+                e.preventDefault();
+                //拖拽元素进入投放区并投放时，显示文件样式  
+                readFile(e.dataTransfer.files[0]);
+            };
+
+            $("#select-file").bind('change', function () {
+                if (!this.value) {
+                    return;
+                }
+                readFile(this.files[0]);
+            });
+
             $(window).resize(resizeCanvas);
             resizeCanvas();
-            // createContainer($("#root"));
-            // createContainer($("#root").children(".container-right").children(".container"));
-            // $("#root").children(".circle-right").children(".circle-left").append("<p>232</p>");
-            // console.log($("#root").children(".circle-right").children(".circle-left").children("p").text())
-
-
-            // let ret = createContainer($("body"));
-            // setContainerTitle(ret, "root");
-
-            parseDeviceTree();
-            resizeCanvas();
-            updateLink();
         })();
     </script>
 </body>

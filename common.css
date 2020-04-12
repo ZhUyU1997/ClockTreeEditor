@@ -140,6 +140,11 @@ span>.balloon {
     width: 100%;
 }
 
+span>input[type=text].balloon.text-change {
+    background-color: rgba(253, 76, 76, 0.439);
+    transition: background-color 1s cubic-bezier(.16,.58,.29,.62);
+}
+
 span>input[type=text].balloon:focus, span>input[type=text].balloon:active {
     color: #377D6A;
     background: #fff;
@@ -149,6 +154,10 @@ span>input[type=text].balloon:focus, span>input[type=text].balloon:active {
 span>input[type=text].balloon:hover {
     color: #377D6A;
     background: #fff;
+}
+
+span>input[type=text].balloon:disabled:focus,span>input[type=text].balloon:disabled:active{
+    text-align: right;
 }
 
 span>.balloon+label {
@@ -172,6 +181,10 @@ span>.balloon+label {
     background: #a8dabc;
 }
 
+span>input[type=text].balloon:disabled +label{
+    background: #a8a8a8;
+}
+
 span>.balloon+label:after {
     /* display: inline-block; */
     left: 0px;
@@ -186,6 +199,11 @@ span>input[type=text].balloon:focus+label, span>input[type=text].balloon:active+
     height: 38px;
     line-height: 38px;
     transform: translateX(calc(-100% - 5px));
+}
+
+span>input[type=text].balloon:disabled:focus +label,span>input[type=text].balloon:disabled:active +label{
+    background: #a8a8a8;
+    transform: translateX(0px);
 }
 
 span>.checkbox>input {
@@ -303,4 +321,75 @@ span.object>span:first-child>.checkbox>input::after {
 
 span.object>span:first-child>.checkbox>input:checked::after {
     transform: rotate(90deg);
+}
+
+.popup {
+    position: fixed;
+    z-index: 999;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(9px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.file-drag {
+    width: 400px;
+    height: 200px;
+    min-width: 300px;
+    background-color: rgba(255, 255, 255, 1);
+    border-radius: 30px;
+    border: rgb(189, 183, 243) 3px dashed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.file-drag > div:nth-child(1) {
+    font-size: 20px;
+    font-weight: 1000;
+    margin: 5px;
+}
+
+.file-drag > div:nth-child(2)  {
+    font-size: 20px;
+    font-weight: 1000;
+    border: rgb(189, 183, 243) 3px solid;
+    color:  rgb(189, 183, 243);
+    border-radius: 10px;
+    padding: 5px;
+    position: relative;
+    transition: all .2s ease-in-out;
+
+
+}
+
+.file-drag > div:nth-child(2):hover {
+    color: white;
+    background-color: rgb(189, 183, 243);
+    font-size: 30px;
+    transition: all .2s ease-in-out;
+}
+
+.file-drag > div:nth-child(2) > input {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+    filter: opacity(0);
+}
+
+.file-drag > div:nth-child(3)  {
+    font-size: 20px;
+    font-weight: 1000;
+    color:  red;
+    border-radius: 10px;
+    padding: 5px;
+    position: relative;
+
 }
