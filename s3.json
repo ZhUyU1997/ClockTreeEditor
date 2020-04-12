@@ -1,5 +1,4 @@
-
-let json = {
+{
 	"clk-fixed@0": { "name": "osc24m", "rate": 24000000 },
 	"clk-fixed@1": { "name": "osc32k", "rate": 32768 },
 	"clk-fixed@2": { "name": "iosc", "rate": 16000000 },
@@ -202,5 +201,5 @@ let json = {
 	"clk-divider@0x01c20090": { "parent": "ratio-sdmmc2", "name": "div-sdmmc2", "shift": 0, "width": 4, "divider-one-based": true, "default": { "rate": 50000000 } },
 	"clk-gate@0x01c20090": {"parent": "div-sdmmc2", "name": "gate-sdmmc2", "shift": 31, "invert": false },
 	"clk-gate@0x01c20060": {"parent": "gate-sdmmc2", "name": "gate-bus-sdmmc2", "shift": 10, "invert": false },
-	"clk-link": { "parent": "gate-bus-sdmmc2", "name": "link-sdmmc2" },
+	"clk-link": { "parent": "gate-bus-sdmmc2", "name": "link-sdmmc2" }
 }

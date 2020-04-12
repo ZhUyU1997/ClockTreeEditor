@@ -6,7 +6,7 @@
     <title>Document</title>
     <script src="./jquery-3.4.1.min.js"></script>
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/snap.svg/0.5.1/snap.svg-min.js"></script> -->
-    <script src="./main.js"></script>
+    <!-- <script src="./main.js"></script> -->
     <link rel="stylesheet" href="common.css">
 </head>
 
@@ -295,8 +295,7 @@
             let nameMap = { "root": "root" };
 
             for (let i in json) {
-                if(i.substr(0,4) !== "clk-")
-                {
+                if (i.substr(0, 4) !== "clk-") {
                     continue;
                 }
 
@@ -411,7 +410,6 @@
                 update();
             });
 
-
             $("#file-drag")[0].ondragover = function (e) {
                 e.preventDefault();
                 //拖拽元素进入投放区时，鼠标样式变为move
@@ -433,6 +431,29 @@
             $(window).resize(resizeCanvas);
             resizeCanvas();
         })();
+ 
+
+        $(function () {
+            $.ajax({
+                url: "s3.json",    //请求的url地址
+                dataType: "text",   //返回格式为json
+                async: true,//请求是否异步，默认为异步，这也是ajax重要特性
+                type: "GET",   //请求方式
+                beforeSend: function () {
+                },
+                success: function (req) {
+                    console.log(JSON.parse(req));
+                    $(".popup").hide();
+                    parseDeviceTree(JSON.parse(req));
+                    update();
+                },
+                complete: function () {
+                },
+                error: function () {
+                }
+            });
+        });
+
     </script>
 </body>
 
