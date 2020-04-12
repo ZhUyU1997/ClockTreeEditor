@@ -249,12 +249,12 @@
 
         function dragPanelMove(moveDiv) {
             $(moveDiv).mousedown(function (e) {
-                var isMove = true;
-                var div_x = e.pageX - $(moveDiv).offset().left;
-                var div_y = e.pageY - $(moveDiv).offset().top;
+                let isMove = true;
+                let div_x = e.pageX - $(moveDiv).offset().left;
+                let div_y = e.pageY - $(moveDiv).offset().top;
                 $(document).mousemove(function (e) {
                     if (isMove) {
-                        var obj = $(moveDiv);
+                        let obj = $(moveDiv);
                         obj.css({ "left": e.pageX - div_x, "top": e.pageY - div_y });
                     }
                 }).mouseup(
@@ -373,7 +373,7 @@
                 reader.readAsText(file);
                 reader.onload = function () {
                     //取到文件结果，就可以它了
-                    var fileResult = reader.result;
+                    let fileResult = reader.result;
                     try {
                         let json = JSON.parse(reader.result);
                         console.log("JSON");
