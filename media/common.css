@@ -6,6 +6,7 @@ body {
     justify-content: center;
     align-items: flex-start;
     flex-direction: column;
+    min-height: 100vh;
 }
 
 * {
@@ -45,6 +46,13 @@ body {
     align-items: center;
     flex-direction: column;
     position: relative;
+}
+
+.root > .container > .container-left {
+    min-width: 30px;
+    min-height: 30px;
+    padding: 0px;
+    background-color: #F5AC67;
 }
 
 .container-right {
